@@ -1,0 +1,274 @@
+swagger: '2.0'
+info:
+  title: PrefixCommons API
+  description: Prefixcommons API
+  version: "0.1.0"
+  contact: 
+    name: Michel Dumontier
+    url: http://dumontierlab.stanford.edu
+    email: michel.dumontier@stanford.edu
+  license:
+    name: Creative Commons By Attribution 4.0
+    url: https://creativecommons.org/licenses/by/4.0
+    
+host: api.prefixcommons.org
+schemes:
+  - http
+  - https
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /resources:
+    get:
+      summary: Resources
+      description: |
+        Get a list of all the resources in the repository. 
+        The response includes the identifier and display name for each resource
+      tags:
+        - Resources
+      responses:
+        200:
+          description: An array of resources
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Resource'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /resource:
+    get:
+      summary: Resource
+      description: |
+        Return resources based on ID
+      parameters:
+        - name: id
+          in: query
+          description: Resource identifier
+          required: true
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+      tags:
+        - Resources
+      responses:
+        200:
+          description: An array of price estimates by product
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Resource'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /resource/prefix:
+    get:
+      summary: Resource
+      description: Get one or more resources that match a prefix
+      responses:
+        200:
+          description: An array of resources
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Resource'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /organizations:
+    get:
+      summary: Get a list of all organizations that provide a resource 
+      tags:
+        - Providers      
+      responses:
+        200:
+          description: A list of the organizations
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Organization'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'              
+        
+definitions:
+  Organization:
+    type: object
+    properties:
+      id: 
+        type: string
+        description: A unique identifier for the organization
+      name:
+        type: string
+        description: A preferred name of the organization
+      website:
+        type: string
+        description: The website for the organization
+        
+  Resource:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier representing a specific resource. 
+      title:
+        type: string
+        description: The title of the resource.
+      description:
+        type: string
+        description: Description of resource.
+      abbreviation:
+        type: string
+        description: Common abbreviation for the resource.
+      responsibleOrganization:
+        # organization that is responsible for the resource.
+        $ref: '#/definitions/Organization'
+      license:
+        type: string
+        description: An online document that specifies licensing information for the resource.
+      documentation:
+        type: string
+        description: An online document that provides documentation for the resource.
+      publications:
+        type: array
+        description: Publications that describe the resource.
+        items:
+          $ref: '#/definitions/Publication'
+      
+      curie_example:
+        type: string
+        description: An example CURIE for the resource where the resource prefix is separated from the local identifier using a colon character ':'
+
+      local_identifier_regex: 
+        type: string
+        description: A regular expression for the local part of a CURIE
+        
+      local_identifier_example:
+        type: string
+        description: An examplar local identifier that matches the regex
+        
+      prefix_example: 
+        type: string
+        description: An example prefix
+
+      keywords:
+        type: array
+        items:
+          $ref: '#/definitions/Keyword'
+      
+      alternative_identifier:
+        type: array
+        items:
+          type: string
+          
+      prefixes:
+        type: array
+        items:
+          $ref: '#/definitions/Prefix'
+          
+      URI_Pattern:
+        type: array
+        description: A list of URI patterns for the resource
+        items:
+          $ref: '#/definitions/URIPattern'
+          
+      URL_Resolver:
+        type: array
+        description: A list of content-type resolvers for a particular resource item
+        items:
+          $ref: '#/definitions/Resolver'
+
+  URIPattern:
+    type: object
+    properties:
+      uripattern:
+        type: string
+        description: The URI pattern.
+      source: 
+        # description: The organization responsible for the pattern
+        $ref: '#/definitions/Organization'
+      role: 
+        type: string
+        description: The role of the source in relation to the URI pattern
+  Resolver:
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name of the resolver for the resource
+      url:
+        type: string
+        description: A URL for the resolver
+      url_pattern:
+        type: string
+        description: A pattern to specify a resolving URL for the resource
+      content_type:
+        type: string
+        description: The content type that can be requested from the resolver
+        enum:
+          - text/html
+          - rdf/xml
+          - text/csv
+          - text/tab-separated-values
+          - application/json
+          - application/json+ld
+          - text/plain
+          - text/turtle
+        default: text/html
+        
+          
+    
+        
+  Prefix:
+    type: object
+    properties:
+      label: 
+        type: string
+        description: The prefix value
+      source:
+        type: object
+        description: The source of the prefix
+      source_role:
+        type: string
+        description: The role of the source in providing this prefix
+        enum:
+          - authority
+          - resolver
+          - referrer
+        default: referrer
+      used_by:
+        type: array
+        description: A list of the organizations for which this is a primary prefix
+        items:
+          $ref: '#/definitions/Organization'
+
+  Keyword:
+    type: object
+    properties:
+      label: 
+        type: string
+        description: The keyword
+      uri:
+        type: string
+        description: A concept definition for the keyword
+      
+  Publication:
+    type: object
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
