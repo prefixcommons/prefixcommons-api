@@ -268,7 +268,7 @@ $app->GET($version.'/getPreferredCURIE/{curie}', function($request, $response, $
  * Notes: 
  * Output-Formats: [application/json]
  */
-$app->GET($verison.'/getPreferredURI/{uri:.*}', function($request, $response, $arg) {
+$app->GET($version.'/getPreferredURI/{uri:.*}', function($request, $response, $arg) {
 	global $client, $params;
 
 	$arg_name = 'uri';
