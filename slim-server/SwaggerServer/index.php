@@ -32,7 +32,7 @@ $logfile = "my.log";
 $logger = Elasticsearch\ClientBuilder::defaultLogger($logfile);
 $client = Elasticsearch\ClientBuilder::create()
 	->setLogger($logger)  
-	->setHosts( ['localhost:9200'] )
+	->setHosts( ['elastic:9200'] )
 	->build();
 $params = [
 	'index' => 'prefixcommons',
