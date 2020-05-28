@@ -1,0 +1,33 @@
+version: "2"
+
+networks:
+  net1: {}
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:test
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - net1
+
+  es:
+    build: ./prefixcommons-elasticsearch
+    expose:
+      - "9200"
+      - "9300"
+    environment:
+      WEB_PORTS: 9200
+      VIRTUAL_HOST: www.prefixcommonsx.org
+    networks:
+      - net1
+
+  webapp:
+    build: ./prefixcommons-httpd
+    expose:
+      - "80"
+    environment:
+      WEB_PORTS: 80
+      VIRTUAL_HOST: www.prefixcommonsx.org
+    networks:
+      - net1
