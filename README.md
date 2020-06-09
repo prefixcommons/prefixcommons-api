@@ -11,3 +11,19 @@ Code stub was generated with [Swagger CodeGen](https://github.com/swagger-api/sw
 Modified the composer.json to include MonoLog and ElasticSearch libraries
 
 Code currently in index.php file
+
+## Deploy prefixcommons API
+
+Use the start.sh scripts to deploy on node2 (will use `/data/prefixcommons` as working folder):
+
+```bash
+./start.sh
+```
+
+> It will create the required folders, start docker containers and init database
+
+## Docker compose
+
+Docker compose is not finished
+
+The goal is to avoid needing to perform bash operations by preparing the httpd and elasticsearch images

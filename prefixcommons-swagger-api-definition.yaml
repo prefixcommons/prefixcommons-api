@@ -1,25 +1,17 @@
-swagger: '2.0'
+openapi: 3.0.0
 info:
   title: PrefixCommons API
   description: Prefixcommons API
-  version: "0.1.0"
-  contact: 
+  version: 0.1.0
+  contact:
     name: Michel Dumontier
-    url: http://dumontierlab.stanford.edu
+    url: 'http://dumontierlab.stanford.edu'
     email: michel.dumontier@stanford.edu
   license:
     name: Creative Commons By Attribution 4.0
-    url: https://creativecommons.org/licenses/by/4.0
-    
-host: api.prefixcommons.org
-schemes:
-  - http
-  - https
-basePath: /v1
-produces:
-  - application/json
+    url: 'https://creativecommons.org/licenses/by/4.0'
 paths:
-  /resources:
+  "/resources":
     get:
       summary: Resources
       description: |
@@ -28,247 +20,357 @@ paths:
       tags:
         - Resources
       responses:
-        200:
+        '200':
           description: An array of resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  "/resource/byPrefix/{prefix}":
+    get:
+      summary: Resource by prefix
+      description: |
+        Get one or more resources that match a prefix
+      parameters:
+        - name: prefix
+          in: path
+          description: Resource identifier
+          required: true
+          style: simple
           schema:
             type: array
             items:
-              $ref: '#/definitions/Resource'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-  /resource:
-    get:
-      summary: Resource
-      description: |
-        Return resources based on ID
-      parameters:
-        - name: id
-          in: query
-          description: Resource identifier
-          required: true
-          type: array
-          items:
-            type: string
-          collectionFormat: csv
+              type: string
       tags:
         - Resources
       responses:
-        200:
-          description: An array of price estimates by product
-          schema:
-            type: object
-            items:
-              $ref: '#/definitions/Resource'
+        '200':
+          description: A resource matching the given prefix
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
         default:
           description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-
-  /resource/prefix:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  "/resource/byOrganization/{organization}":
     get:
-      summary: Resource
-      description: Get one or more resources that match a prefix
-      responses:
-        200:
-          description: An array of resources
+      summary: Resource by organization
+      description: |
+        Get one or more resources that match a prefix
+      parameters:
+        - name: organization
+          in: path
+          description: Resource identifier
+          required: true
+          style: simple
           schema:
             type: array
             items:
-              $ref: '#/definitions/Resource'
-        default:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-
-  /organizations:
-    get:
-      summary: Get a list of all organizations that provide a resource 
+              type: string
       tags:
-        - Providers      
+        - Resources
       responses:
-        200:
-          description: A list of the organizations
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Organization'
+        '200':
+          description: A resource matching the given prefix
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
         default:
           description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  "/organizations":
+    get:
+      summary: Get a list of all organizations that provide a resource
+      tags:
+        - Providers
+      responses:
+        '200':
+          description: A list of the organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  "/getPreferredCURIE/{curie}":
+    get:
+      summary: Generate the preferred CURIE
+      description: Generate the preferred CURIE from a CURIE -> prefix:local_identifier
+      parameters:
+        - name: curie
+          in: path
+          description: Resource identifier
+          required: true
+          style: simple
           schema:
-            $ref: '#/definitions/Error'              
-        
-definitions:
-  Organization:
-    type: object
-    properties:
-      id: 
-        type: string
-        description: A unique identifier for the organization
-      name:
-        type: string
-        description: A preferred name of the organization
-      website:
-        type: string
-        description: The website for the organization
-        
-  Resource:
-    type: object
-    properties:
-      id:
-        type: string
-        description: Unique identifier representing a specific resource. 
-      title:
-        type: string
-        description: The title of the resource.
-      description:
-        type: string
-        description: Description of resource.
-      abbreviation:
-        type: string
-        description: Common abbreviation for the resource.
-      responsibleOrganization:
-        # organization that is responsible for the resource.
-        $ref: '#/definitions/Organization'
-      license:
-        type: string
-        description: An online document that specifies licensing information for the resource.
-      documentation:
-        type: string
-        description: An online document that provides documentation for the resource.
-      publications:
-        type: array
-        description: Publications that describe the resource.
-        items:
-          $ref: '#/definitions/Publication'
-      
-      curie_example:
-        type: string
-        description: An example CURIE for the resource where the resource prefix is separated from the local identifier using a colon character ':'
+            type: string
+      tags:
+        - Providers
+      responses:
+        '200':
+          description: The preferred CURIE
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  "/getPreferredURI/{uri}":
+    get:
+      summary: Generate the preferred URI
+      description: Generate the preferred URI from a URI
+      parameters:
+        - name: uri
+          in: path
+          description: Resource identifier
+          required: true
+          style: simple
+          schema:
+            type: string
+      tags:
+        - Providers
+      responses:
+        '200':
+          description: The preferred URI
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  "/getPreferredURIfromProvider/{provider}/{uri}":
+    get:
+      summary: Generate the preferred URI from a specific provider
+      description: Generate the preferred URI from a specific provider
+      parameters:
+        - name: provider
+          in: path
+          description: Resource identifier
+          required: true
+          style: simple
+          schema:
+            type: string
+        - name: uri
+          in: path
+          description: Resource identifier
+          required: true
+          style: simple
+          schema:
+            type: string
+      tags:
+        - Providers
+      responses:
+        '200':
+          description: The preferred URI
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
-      local_identifier_regex: 
-        type: string
-        description: A regular expression for the local part of a CURIE
-        
-      local_identifier_example:
-        type: string
-        description: An examplar local identifier that matches the regex
-        
-      prefix_example: 
-        type: string
-        description: An example prefix
-
-      keywords:
-        type: array
-        items:
-          $ref: '#/definitions/Keyword'
-      
-      alternative_identifier:
-        type: array
-        items:
+servers:
+  - url: 'https://api.prefixcommons.org/v1'
+components:
+  schemas:
+    Organization:
+      type: object
+      properties:
+        id:
           type: string
-          
-      prefixes:
-        type: array
-        items:
-          $ref: '#/definitions/Prefix'
-          
-      URI_Pattern:
-        type: array
-        description: A list of URI patterns for the resource
-        items:
-          $ref: '#/definitions/URIPattern'
-          
-      URL_Resolver:
-        type: array
-        description: A list of content-type resolvers for a particular resource item
-        items:
-          $ref: '#/definitions/Resolver'
-
-  URIPattern:
-    type: object
-    properties:
-      uripattern:
-        type: string
-        description: The URI pattern.
-      source: 
-        # description: The organization responsible for the pattern
-        $ref: '#/definitions/Organization'
-      role: 
-        type: string
-        description: The role of the source in relation to the URI pattern
-  Resolver:
-    type: object
-    properties:
-      name:
-        type: string
-        description: The name of the resolver for the resource
-      url:
-        type: string
-        description: A URL for the resolver
-      url_pattern:
-        type: string
-        description: A pattern to specify a resolving URL for the resource
-      content_type:
-        type: string
-        description: The content type that can be requested from the resolver
-        enum:
-          - text/html
-          - rdf/xml
-          - text/csv
-          - text/tab-separated-values
-          - application/json
-          - application/json+ld
-          - text/plain
-          - text/turtle
-        default: text/html
-        
-          
-    
-        
-  Prefix:
-    type: object
-    properties:
-      label: 
-        type: string
-        description: The prefix value
-      source:
-        type: object
-        description: The source of the prefix
-      source_role:
-        type: string
-        description: The role of the source in providing this prefix
-        enum:
-          - authority
-          - resolver
-          - referrer
-        default: referrer
-      used_by:
-        type: array
-        description: A list of the organizations for which this is a primary prefix
-        items:
-          $ref: '#/definitions/Organization'
-
-  Keyword:
-    type: object
-    properties:
-      label: 
-        type: string
-        description: The keyword
-      uri:
-        type: string
-        description: A concept definition for the keyword
-      
-  Publication:
-    type: object
-  Error:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-      fields:
-        type: string
+          description: A unique identifier for the organization
+        name:
+          type: string
+          description: A preferred name of the organization
+        website:
+          type: string
+          description: The website for the organization
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier representing a specific resource.
+        title:
+          type: string
+          description: The title of the resource.
+        description:
+          type: string
+          description: Description of resource.
+        abbreviation:
+          type: string
+          description: Common abbreviation for the resource.
+        responsibleOrganization:
+          $ref: '#/components/schemas/Organization'
+        license:
+          type: string
+          description: >-
+            An online document that specifies licensing information for the
+            resource.
+        documentation:
+          type: string
+          description: An online document that provides documentation for the resource.
+        publications:
+          type: array
+          description: Publications that describe the resource.
+          items:
+            $ref: '#/components/schemas/Publication'
+        curie_example:
+          type: string
+          description: >-
+            An example CURIE for the resource where the resource prefix is
+            separated from the local identifier using a colon character ':'
+        local_identifier_regex:
+          type: string
+          description: A regular expression for the local part of a CURIE
+        local_identifier_example:
+          type: string
+          description: An examplar local identifier that matches the regex
+        prefix_example:
+          type: string
+          description: An example prefix
+        keywords:
+          type: array
+          items:
+            $ref: '#/components/schemas/Keyword'
+        alternative_identifier:
+          type: array
+          items:
+            type: string
+        prefixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prefix'
+        URI_Pattern:
+          type: array
+          description: A list of URI patterns for the resource
+          items:
+            $ref: '#/components/schemas/URIPattern'
+        URL_Resolver:
+          type: array
+          description: A list of content-type resolvers for a particular resource item
+          items:
+            $ref: '#/components/schemas/Resolver'
+    URIPattern:
+      type: object
+      properties:
+        uripattern:
+          type: string
+          description: The URI pattern.
+        source:
+          $ref: '#/components/schemas/Organization'
+        role:
+          type: string
+          description: The role of the source in relation to the URI pattern
+    Resolver:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the resolver for the resource
+        url:
+          type: string
+          description: A URL for the resolver
+        url_pattern:
+          type: string
+          description: A pattern to specify a resolving URL for the resource
+        content_type:
+          type: string
+          description: The content type that can be requested from the resolver
+          enum:
+            - text/html
+            - rdf/xml
+            - text/csv
+            - text/tab-separated-values
+            - application/json
+            - application/json+ld
+            - text/plain
+            - text/turtle
+          default: text/html
+    Prefix:
+      type: object
+      properties:
+        label:
+          type: string
+          description: The prefix value
+        source:
+          type: object
+          description: The source of the prefix
+        source_role:
+          type: string
+          description: The role of the source in providing this prefix
+          enum:
+            - authority
+            - resolver
+            - referrer
+          default: referrer
+        used_by:
+          type: array
+          description: A list of the organizations for which this is a primary prefix
+          items:
+            $ref: '#/components/schemas/Organization'
+    Keyword:
+      type: object
+      properties:
+        label:
+          type: string
+          description: The keyword
+        uri:
+          type: string
+          description: A concept definition for the keyword
+    Publication:
+      type: object
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        fields:
+          type: string
