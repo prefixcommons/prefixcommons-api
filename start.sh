@@ -14,6 +14,7 @@ git clone https://github.com/prefixcommons/data-ingest.git
 
 docker run --detach \
     --name elastic \
+    --env LOG4J_FORMAT_MSG_NO_LOOKUPS=true \
     --env VIRTUAL_HOST=elastic.prefixcommons.org \
     --env VIRTUAL_PORT=9200 \
     --env LETSENCRYPT_HOST=elastic.prefixcommons.org \

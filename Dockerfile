@@ -1,8 +1,8 @@
 FROM php:7-apache
 
-MAINTAINER Alexander Malic <alexander.malic@maastrichtuniversity.nl>
-MAINTAINER Vincent Emonet <vincent.emonet@maastrichtuniversity.nl>
-MAINTAINER Michel Dumontier <michel.dumontier@maastrichtuniversity.nl>
+# MAINTAINER Alexander Malic <alexander.malic@maastrichtuniversity.nl>
+# MAINTAINER Vincent Emonet <vincent.emonet@maastrichtuniversity.nl>
+# MAINTAINER Michel Dumontier <michel.dumontier@maastrichtuniversity.nl>
 
 ARG APP_ENV=prod
 
