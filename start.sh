@@ -20,10 +20,14 @@ docker run --detach \
     --env LETSENCRYPT_HOST=elastic.prefixcommons.org \
     --env LETSENCRYPT_VIRTUAL_PORT=9200 \
     --env LETSENCRYPT_EMAIL=alexander.malic@maastrichtuniversity.nl \
+    --env discovery.type=single-node \
+    --env http.cors.enabled=true \
+    --env http.cors.allow-origin="*" \
     --publish 9200:9200 \
     --volume /data/prefixcommons/elastic:/usr/share/elasticsearch/data \
     --restart unless-stopped \
-    aqlx86/elasticsearch-cors
+    docker.elastic.co/elasticsearch/elasticsearch:6.8.21
+    # aqlx86/elasticsearch-cors
 
 docker run --detach \
     --name httpd \
